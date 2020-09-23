@@ -1,16 +1,19 @@
-# furniture_app
+# ChairBuy App
 
-A new Flutter project.
+This is just dummy app about shop that selling Chair for my portfolio.
 
-## Getting Started
+## What is in here?
 
-This project is a starting point for a Flutter application.
+I'm trying to build app with MVVM design pattern, so the code is much cleaner.
 
-A few resources to get you started if this is your first Flutter project:
+I also trying to using Smooth Page Indicator by Milad Akarie (https://pub.dev/packages/smooth_page_indicator).
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Who's UI designer of this app?
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Ofcouse not me, the UI/UX designer of this app is Ankur Tripathi, kindly check his awesome work.
+
+His Dribbble:
+https://dribbble.com/ankur_007
+
+This UI design template:
+https://dribbble.com/shots/11655784-Daily-UI-Challenge-075-100-Furniture-E-commerce-App-design
