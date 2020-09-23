@@ -340,7 +340,8 @@ class BestSellingCardBuilder extends StatelessWidget {
       children: [
         ClipRRect(
           child: Container(
-            margin: EdgeInsets.symmetric(vertical: 30.0, horizontal: 15.0),
+            margin: EdgeInsets.only(
+                top: 30.0, bottom: 30.0, left: 15.0, right: 25.0),
             width: 170,
             decoration: BoxDecoration(
               boxShadow: [
@@ -426,8 +427,8 @@ class BestSellingCardBuilder extends StatelessWidget {
         // Bookmark Button
 
         Positioned(
-          bottom: 15,
-          right: 0,
+          bottom: 20,
+          right: 10,
           child: Stack(
             children: [
               Container(
