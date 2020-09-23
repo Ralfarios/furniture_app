@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:furniture_app/model/list/trending.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../core/const/path/icon.dart' as icon;
@@ -473,31 +474,113 @@ class _TrendingCardSwipeState extends State<TrendingCardSwipe> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 322,
+      height: 340,
       child: ListView.builder(
+        physics: BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
-        itemCount: 3,
+        itemCount: trendingListCategory.length,
         itemBuilder: (BuildContext context, int index) {
           return Padding(
-            padding: const EdgeInsets.only(left: 20.0, right: 10, bottom: 20.0),
-            child: Container(
-              margin: EdgeInsets.symmetric(vertical: 30.0),
-              width: 150,
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: kShadowCard,
-                    spreadRadius: 0,
-                    blurRadius: 25,
-                    offset: Offset(0, 0),
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(16),
-                color: kWhite,
+            padding: const EdgeInsets.only(left: 6.0, right: 0, bottom: 20.0),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 6.0, right: 0.0),
+              child: TrendingListCardBuilder(
+                trendingList: trendingListCategory[index],
               ),
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class TrendingListCardBuilder extends StatelessWidget {
+  final TrendingListCategory trendingList;
+
+  const TrendingListCardBuilder({Key key, this.trendingList}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 30.0, horizontal: 10.0),
+        width: 170,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: kShadowCard,
+              spreadRadius: 0,
+              blurRadius: 10,
+              offset: Offset(0, 0),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(16),
+          color: kWhite,
+        ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Image.asset(
+                      trendingList.image,
+                      height: 120,
+                      width: 120,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          trendingList.name,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline1
+                              .copyWith(fontSize: 18),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          trendingList.desc,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline2
+                              .copyWith(fontSize: 10),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          "\$ " + trendingList.price.toString(),
+                          style: Theme.of(context).textTheme.headline2.copyWith(
+                                fontSize: 18,
+                                color: kMainBlue,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned.fill(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16.0),
+                  onTap: () {},
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
