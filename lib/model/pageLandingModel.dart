@@ -422,9 +422,12 @@ class BestSellingCardBuilder extends StatelessWidget {
             ),
           ),
         ),
+
+        // Bookmark Button
+
         Positioned(
           bottom: 15,
-          right: 10,
+          right: 0,
           child: Stack(
             children: [
               Container(
