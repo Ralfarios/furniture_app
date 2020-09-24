@@ -1,8 +1,10 @@
-import 'dart:ffi';
+//import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:furniture_app/model/list/trending.dart';
 import 'package:furniture_app/view/pageBookmarkView.dart';
+import 'package:furniture_app/viewmodel/pageLandingViewModel.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../core/const/path/icon.dart' as icon;
@@ -148,50 +150,60 @@ class _ArrivalCardSwipeState extends State<ArrivalCardSwipe> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      //crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(
-          height: 252,
-          child: PageView.builder(
-            physics: BouncingScrollPhysics(),
-            itemCount: arrivalListCategory.length,
-            controller: controller,
-            onPageChanged: (int page) => pageChanged,
-            itemBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.only(left: 5.0),
-              child: ArrivalCardBuilder(
-                arrivalList: arrivalListCategory[index],
+    return ChangeNotifierProvider<SliderIndicatorBullet>(
+      create: (context) => SliderIndicatorBullet(),
+      child: Builder(
+        builder: (context) {
+          return Stack(
+            //crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Consumer<SliderIndicatorBullet>(
+                  builder: (context, provider, child) {
+                return SizedBox(
+                  height: 252,
+                  child: PageView.builder(
+                    physics: BouncingScrollPhysics(),
+                    itemCount: arrivalListCategory.length,
+                    controller: controller,
+                    onPageChanged: (int page) => provider.sliderIndicatorLength,
+                    itemBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: ArrivalCardBuilder(
+                        arrivalList: arrivalListCategory[index],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+              Positioned(
+                bottom: 5,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 28.0),
+                  child: SmoothPageIndicator(
+                    controller: controller,
+                    count: arrivalListCategory.length,
+                    effect: WormEffect(
+                      activeDotColor: kMainBlue,
+                      dotColor: kBlack50,
+                      dotHeight: 8,
+                      dotWidth: 8,
+                      spacing: 4,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 5,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 28.0),
-            child: SmoothPageIndicator(
-              controller: controller,
-              count: arrivalListCategory.length,
-              effect: WormEffect(
-                activeDotColor: kMainBlue,
-                dotColor: kBlack50,
-                dotHeight: 8,
-                dotWidth: 8,
-                spacing: 4,
-              ),
-            ),
-          ),
-        ),
-      ],
+            ],
+          );
+        },
+      ),
     );
   }
 
-  Void pageChanged(int page) {
+  /*Void pageChanged(int page) {
     for (int i = 0; i < arrivalListCategory.length.toInt(); i++)
       setState(() {});
     return null;
-  }
+  }*/
 }
 
 class ArrivalCardBuilder extends StatelessWidget {
