@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:furniture_app/model/list/trending.dart';
+import 'package:furniture_app/view/pageBookmarkView.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../core/const/path/icon.dart' as icon;
@@ -82,7 +83,14 @@ class LandingFAB extends StatelessWidget {
     return FloatingActionButton(
       backgroundColor: kMainBlue,
       child: Image.asset(icon.ibBookmark),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PageBookmarkView(),
+          ),
+        );
+      },
     );
   }
 }

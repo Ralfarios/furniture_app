@@ -4,6 +4,7 @@ const iaBookmark = 'assets/images/ico/ico_appbar_bookmark.png';
 const iaDrawer = 'assets/images/ico/ico_appbar_drawer.png';
 const iaMore = 'assets/images/ico/ico_appbar_more.png';
 const iaSearch = 'assets/images/ico/ico_appbar_search.png';
+const iaBack = 'assets/images/ico/ico_appbar_back.png';
 
 // Bottom Navbar Icon
 
