@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_app/model/list/arrival.dart';
 
-class SliderIndicatorBullet extends ChangeNotifier {
+import '../core/const/path/router.dart';
+import '../model/list/arrival.dart';
+
+class PageLandingViewModel extends ChangeNotifier {
   int length = arrivalListCategory.length.toInt();
 
   void changePage(int page) {
@@ -12,4 +14,8 @@ class SliderIndicatorBullet extends ChangeNotifier {
   }
 
   int get sliderIndicatorLength => length;
+
+  toProductPage(context) => Navigator.pushNamed(context, ProductRoute);
+
+  toBookmarkPage(context) => Navigator.pushNamed(context, BookmarkRoute);
 }

@@ -1,9 +1,7 @@
 //import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import 'package:furniture_app/model/list/trending.dart';
-import 'package:furniture_app/view/pageBookmarkView.dart';
-import 'package:furniture_app/viewmodel/pageLandingViewModel.dart';
+
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -11,6 +9,8 @@ import '../core/const/path/icon.dart' as icon;
 import '../core/const/style/color.dart';
 import '../model/list/arrival.dart';
 import '../model/list/best.dart';
+import '../model/list/trending.dart';
+import '../viewmodel/pageLandingViewModel.dart';
 
 class DrawerIcon extends StatelessWidget {
   @override
@@ -44,9 +44,7 @@ class SearchIcon extends StatelessWidget {
         height: 20,
         width: 20,
       ),
-      onPressed: () {
-        showSearch(context: context, delegate: null);
-      },
+      onPressed: () {},
     );
   }
 }
@@ -82,18 +80,12 @@ class LandingDrawer extends StatelessWidget {
 class LandingFAB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      backgroundColor: kMainBlue,
-      child: Image.asset(icon.ibBookmark),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PageBookmarkView(),
-          ),
-        );
-      },
-    );
+    return Consumer<PageLandingViewModel>(builder: (context, provider, child) {
+      return FloatingActionButton(
+          backgroundColor: kMainBlue,
+          child: Image.asset(icon.ibBookmark),
+          onPressed: () => provider.toBookmarkPage(context));
+    });
   }
 }
 
@@ -150,31 +142,27 @@ class _ArrivalCardSwipeState extends State<ArrivalCardSwipe> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<SliderIndicatorBullet>(
-      create: (context) => SliderIndicatorBullet(),
-      child: Builder(
-        builder: (context) {
+    return Builder(builder: (context) {
+      return Consumer<PageLandingViewModel>(
+        builder: (context, provider, child) {
           return Stack(
             //crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Consumer<SliderIndicatorBullet>(
-                  builder: (context, provider, child) {
-                return SizedBox(
-                  height: 252,
-                  child: PageView.builder(
-                    physics: BouncingScrollPhysics(),
-                    itemCount: arrivalListCategory.length,
-                    controller: controller,
-                    onPageChanged: (int page) => provider.sliderIndicatorLength,
-                    itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.only(left: 5.0),
-                      child: ArrivalCardBuilder(
-                        arrivalList: arrivalListCategory[index],
-                      ),
+              SizedBox(
+                height: 252,
+                child: PageView.builder(
+                  physics: BouncingScrollPhysics(),
+                  itemCount: arrivalListCategory.length,
+                  controller: controller,
+                  onPageChanged: (int page) => provider.sliderIndicatorLength,
+                  itemBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: ArrivalCardBuilder(
+                      arrivalList: arrivalListCategory[index],
                     ),
                   ),
-                );
-              }),
+                ),
+              ),
               Positioned(
                 bottom: 5,
                 child: Padding(
@@ -195,15 +183,9 @@ class _ArrivalCardSwipeState extends State<ArrivalCardSwipe> {
             ],
           );
         },
-      ),
-    );
+      );
+    });
   }
-
-  /*Void pageChanged(int page) {
-    for (int i = 0; i < arrivalListCategory.length.toInt(); i++)
-      setState(() {});
-    return null;
-  }*/
 }
 
 class ArrivalCardBuilder extends StatelessWidget {
@@ -212,110 +194,112 @@ class ArrivalCardBuilder extends StatelessWidget {
   const ArrivalCardBuilder({Key key, this.arrivalList}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        ClipRect(
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 30.0, horizontal: 15.0),
-            width: 386,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: kShadowCard,
-                  spreadRadius: 0,
-                  blurRadius: 10,
-                  offset: Offset(0, 0),
-                ),
-              ],
-              color: kWhite,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Image.asset(
-                    arrivalList.image,
-                    height: 150,
+    return Consumer<PageLandingViewModel>(builder: (context, provider, child) {
+      return Stack(
+        children: [
+          ClipRect(
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 30.0, horizontal: 15.0),
+              width: 386,
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: kShadowCard,
+                    spreadRadius: 0,
+                    blurRadius: 10,
+                    offset: Offset(0, 0),
                   ),
-                ),
-                Positioned.fill(
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16.0),
-                      onTap: () {},
+                ],
+                color: kWhite,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Image.asset(
+                      arrivalList.image,
+                      height: 150,
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 42.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "NEW ARRIVAL",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        .copyWith(fontSize: 10, letterSpacing: 4),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    arrivalList.name,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline1
-                        .copyWith(color: kMainBlue, fontSize: 24),
-                  ),
-                  Text(
-                    arrivalList.type,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline1
-                        .copyWith(fontSize: 24),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Aliquip ad magna voluptate\nconsequat adipisicing elit.",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline2
-                        .copyWith(color: kBlack50, fontSize: 8),
-                  ),
-                  SizedBox(height: 15),
-                  Column(
-                    children: [
-                      Text(
-                        "SHOP NOW",
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            .copyWith(fontSize: 10, letterSpacing: 4),
+                  Positioned.fill(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(16.0),
+                        onTap: () => provider.toProductPage(context),
                       ),
-                      SizedBox(height: 5),
-                      Container(
-                        width: 50,
-                        height: 2,
-                        decoration: BoxDecoration(color: kMainBlue),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ],
-    );
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 42.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "NEW ARRIVAL",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(fontSize: 10, letterSpacing: 4),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      arrivalList.name,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1
+                          .copyWith(color: kMainBlue, fontSize: 24),
+                    ),
+                    Text(
+                      arrivalList.type,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1
+                          .copyWith(fontSize: 24),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "Aliquip ad magna voluptate\nconsequat adipisicing elit.",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline2
+                          .copyWith(color: kBlack50, fontSize: 8),
+                    ),
+                    SizedBox(height: 15),
+                    Column(
+                      children: [
+                        Text(
+                          "SHOP NOW",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              .copyWith(fontSize: 10, letterSpacing: 4),
+                        ),
+                        SizedBox(height: 5),
+                        Container(
+                          width: 50,
+                          height: 2,
+                          decoration: BoxDecoration(color: kMainBlue),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    });
   }
 }
 
@@ -356,133 +340,137 @@ class BestSellingCardBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        ClipRRect(
-          child: Container(
-            margin: EdgeInsets.only(
-                top: 30.0, bottom: 30.0, left: 15.0, right: 25.0),
-            width: 170,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: kShadowCard,
-                  spreadRadius: 0,
-                  blurRadius: 10,
-                  offset: Offset(0, 0),
-                ),
-              ],
-              borderRadius: BorderRadius.circular(16),
-              color: kWhite,
-            ),
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: Image.asset(
-                          bestSellingList.image,
-                          height: 120,
-                          width: 120,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              bestSellingList.name,
-                              softWrap: true,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline1
-                                  .copyWith(fontSize: 18),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              bestSellingList.desc,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline2
-                                  .copyWith(fontSize: 10),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              "\$ " + bestSellingList.price.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline2
-                                  .copyWith(
-                                    fontSize: 18,
-                                    color: kMainBlue,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Positioned.fill(
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16.0),
-                      onTap: () {},
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        // Bookmark Button
-
-        Positioned(
-          bottom: 20,
-          right: 10,
-          child: Stack(
-            children: [
-              Container(
-                height: 36,
-                width: 36,
+    return Consumer<PageLandingViewModel>(
+      builder: (context, provider, child) {
+        return Stack(
+          children: [
+            ClipRRect(
+              child: Container(
+                margin: EdgeInsets.only(
+                    top: 30.0, bottom: 30.0, left: 15.0, right: 25.0),
+                width: 170,
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
                       color: kShadowCard,
                       spreadRadius: 0,
-                      blurRadius: 5,
+                      blurRadius: 10,
                       offset: Offset(0, 0),
                     ),
                   ],
-                  color: kMainBlue,
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(16),
+                  color: kWhite,
                 ),
-                child: Image.asset(
-                  icon.icBookmark,
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Image.asset(
+                              bestSellingList.image,
+                              height: 120,
+                              width: 120,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  bestSellingList.name,
+                                  softWrap: true,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline1
+                                      .copyWith(fontSize: 18),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  bestSellingList.desc,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline2
+                                      .copyWith(fontSize: 10),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  "\$ " + bestSellingList.price.toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline2
+                                      .copyWith(
+                                        fontSize: 18,
+                                        color: kMainBlue,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16.0),
+                          onTap: () => provider.toProductPage(context),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Positioned.fill(
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(8.0),
-                    onTap: () {},
+            ),
+
+            // Bookmark Button
+
+            Positioned(
+              bottom: 20,
+              right: 10,
+              child: Stack(
+                children: [
+                  Container(
+                    height: 36,
+                    width: 36,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: kShadowCard,
+                          spreadRadius: 0,
+                          blurRadius: 5,
+                          offset: Offset(0, 0),
+                        ),
+                      ],
+                      color: kMainBlue,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Image.asset(
+                      icon.icBookmark,
+                    ),
                   ),
-                ),
+                  Positioned.fill(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(8.0),
+                        onTap: () {},
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      ],
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -526,86 +514,93 @@ class TrendingListCardBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 30.0, horizontal: 10.0),
-        width: 170,
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: kShadowCard,
-              spreadRadius: 0,
-              blurRadius: 10,
-              offset: Offset(0, 0),
-            ),
-          ],
-          borderRadius: BorderRadius.circular(16),
-          color: kWhite,
-        ),
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Image.asset(
-                      trendingList.image,
-                      height: 120,
-                      width: 120,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          trendingList.name,
-                          softWrap: true,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline1
-                              .copyWith(fontSize: 18),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          trendingList.desc,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline2
-                              .copyWith(fontSize: 10),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          "\$ " + trendingList.price.toString(),
-                          style: Theme.of(context).textTheme.headline2.copyWith(
-                                fontSize: 18,
-                                color: kMainBlue,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Positioned.fill(
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16.0),
-                  onTap: () {},
+    return Consumer<PageLandingViewModel>(
+      builder: (context, provider, child) {
+        return ClipRRect(
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 30.0, horizontal: 10.0),
+            width: 170,
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: kShadowCard,
+                  spreadRadius: 0,
+                  blurRadius: 10,
+                  offset: Offset(0, 0),
                 ),
-              ),
+              ],
+              borderRadius: BorderRadius.circular(16),
+              color: kWhite,
             ),
-          ],
-        ),
-      ),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Image.asset(
+                          trendingList.image,
+                          height: 120,
+                          width: 120,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              trendingList.name,
+                              softWrap: true,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline1
+                                  .copyWith(fontSize: 18),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              trendingList.desc,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2
+                                  .copyWith(fontSize: 10),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "\$ " + trendingList.price.toString(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2
+                                  .copyWith(
+                                    fontSize: 18,
+                                    color: kMainBlue,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned.fill(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16.0),
+                      onTap: () => provider.toProductPage(context),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
